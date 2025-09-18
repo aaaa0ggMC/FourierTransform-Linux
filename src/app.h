@@ -2,6 +2,8 @@
 #define FT_APP_H
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <GL/glew.h>
+#include <iostream>
 #include "vector_resolver.h"
 
 struct MainApplication{
@@ -19,8 +21,9 @@ struct MainApplication{
             "Fourier Transform",
             sf::State::Windowed
         );
+        
         //在带缩放的系统下面优点小问题
-        center.move({- int(window.getSize().x) / 2.0f,- int(window.getSize().y) / 2.0f});
+        center.move({-400 * 1.25,-300 * 1.25});
 
         winctl.create(
             sf::VideoMode(sf::Vector2u(400,300)),
@@ -31,6 +34,12 @@ struct MainApplication{
 
         resolver.vectors.push_back(Vector({100,0},std::chrono::milliseconds(300)));
         vertices.setPrimitiveType(sf::PrimitiveType::LineStrip);
+
+        if(!window.setActive(true))std::cout << "failed" << std::endl;
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        std::cout << "Framebuffer size (OpenGL viewport): " 
+                << viewport[2] << " x " << viewport[3] << std::endl;
     }
 
     void run();
