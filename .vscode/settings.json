@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "variant": "cpp",
+        "ios": "cpp",
+        "numbers": "cpp"
+    }
+}
