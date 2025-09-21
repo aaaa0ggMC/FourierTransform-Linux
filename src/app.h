@@ -11,35 +11,55 @@ struct MainApplication{
     sf::RenderWindow winctl;
     std::optional<sf::Event> event {std::nullopt};
     int return_val {0};
-    sf::VertexArray vertices;
+    sf::VertexArray vertices {sf::PrimitiveType::LineStrip,0};
+    sf::VertexArray coord {sf::PrimitiveType::Lines,4};
+    sf::VertexArray vectors { sf::PrimitiveType::LineStrip,0};
     VResolver resolver;
     sf::View center;
+    sf::View ui;
+    sf::Font defFont;
+
+    float half_w,half_h;
 
     inline void setup(){
         window.create(
-            sf::VideoMode(sf::Vector2u(800,600)),
+            sf::VideoMode(sf::Vector2u(800,800)),
             "Fourier Transform",
             sf::State::Windowed
         );
+        center = ui = window.getDefaultView();
+        half_w = window.getSize().x / 2.f;
+        half_h = window.getSize().y / 2.f;
         
-        //在带缩放的系统下面优点小问题
-        center.move({-400 * 1.25,-300 * 1.25});
+        // 有些特殊配置需要从default view中继承才能正确显示
+        center.move({-400,-400});
 
         winctl.create(
-            sf::VideoMode(sf::Vector2u(400,300)),
+            sf::VideoMode(sf::Vector2u(400,800)),
             "Console - Fourier Transform",
             sf::Style::Default & ~sf::Style::Close,
             sf::State::Windowed
         );
 
-        resolver.vectors.push_back(Vector({100,0},std::chrono::milliseconds(300)));
-        vertices.setPrimitiveType(sf::PrimitiveType::LineStrip);
+        winctl.setPosition(window.getPosition() + sf::Vector2i(800,0));
 
-        if(!window.setActive(true))std::cout << "failed" << std::endl;
-        GLint viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        std::cout << "Framebuffer size (OpenGL viewport): " 
-                << viewport[2] << " x " << viewport[3] << std::endl;
+        resolver.vectors.push_back(Vector({100,0},std::chrono::milliseconds(5000)));
+        resolver.vectors.push_back(Vector({40,0},std::chrono::milliseconds(2000)));
+        resolver.vectors.push_back(Vector({20,0},std::chrono::milliseconds(1500)));
+        resolver.vectors.push_back(Vector({40,0},std::chrono::milliseconds(-1200)));
+        resolver.vectors.push_back(Vector({32,15},std::chrono::milliseconds(3000)));
+
+        coord[0].color = sf::Color(255,255,255);
+        coord[1].color = sf::Color(255,255,255);
+        coord[2].color = sf::Color(255,255,255);
+        coord[3].color = sf::Color(255,255,255);
+        
+        coord[0].position = sf::Vector2f(0,half_h);
+        coord[1].position = sf::Vector2f(half_w * 2,half_h);
+        coord[2].position = sf::Vector2f(half_w,0);
+        coord[3].position = sf::Vector2f(half_w,half_h * 2);
+
+        defFont.openFromFile("./res/nerd_font.ttf"); 
     }
 
     void run();
